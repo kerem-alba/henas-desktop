@@ -1,0 +1,29 @@
+.background-gradient {
+  background: #4261cf;
+  background: -moz-linear-gradient(45deg, #3023ae 0%, #53a0fd 100%);
+  background: -webkit-gradient(linear, left bottom, right top, color-stop(0%, #3023ae), color-stop(100%, #53a0fd));
+  background: -webkit-linear-gradient(45deg, #3023ae 0%, #53a0fd 100%);
+  background: -o-linear-gradient(45deg, #3023ae 0%, #53a0fd 100%);
+  background: -ms-linear-gradient(45deg, #3023ae 0%, #53a0fd 100%);
+  background: linear-gradient(45deg, #3023ae 0%, #53a0fd 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$gradient-start', endColorstr='$gradient-end',GradientType=1 );
+  color: white;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body p {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.5em;
+}
+
+.card-body a {
+  margin-top: auto;
+  align-self: center;
+}
