@@ -6,15 +6,14 @@ const SeniorityTable = ({
   shiftAreas,
   handleMaxShiftsChange,
   handleSeniorityNameChange,
+  handleShiftDurationChange,
   handleSaveSeniorityChanges,
   handleAddSeniority,
   handleDeleteSeniority,
 }) => {
   const [newSeniorityName, setNewSeniorityName] = useState("");
   const [newMaxShifts, setNewMaxShifts] = useState("");
-
-  console.log("detailedSeniorities", detailedSeniorities);
-  console.log("shiftAreas", shiftAreas);
+  const [newShiftDuration, setNewShiftDuration] = useState("12");
 
   return (
     <div className="mb-4">
@@ -23,9 +22,10 @@ const SeniorityTable = ({
         <thead className="thead-dark">
           <tr className="align-middle">
             <th className="col-1 text-center">#</th>
-            <th className="col-4">Kıdem Adı</th>
-            <th className="col-2"> Max Nöbet</th>
-            <th className="col-4">Nöbet Alanları</th>
+            <th className="col-3">Kıdem Adı</th>
+            <th className="col-2">Max Nöbet</th>
+            <th className="col-2">Shift Düzeni</th>
+            <th className="col-3">Nöbet Alanları</th>
             <th className="col-1 text-center">İşlem</th>
           </tr>
         </thead>
@@ -51,6 +51,17 @@ const SeniorityTable = ({
                   onChange={(e) => handleMaxShiftsChange(index, e.target.value)}
                 />
               </td>
+              <td>
+                <select
+                  className="form-select bg-secondary text-white"
+                  value={seniority.shift_duration}
+                  onChange={(e) => handleShiftDurationChange(index, e.target.value)}
+                >
+                  <option value="12">12</option>
+                  <option value="24">24</option>
+                </select>
+              </td>
+
               <td>
                 <DraggableShiftAreaList
                   allShiftAreas={shiftAreas}
@@ -95,6 +106,17 @@ const SeniorityTable = ({
                 onChange={(e) => setNewMaxShifts(e.target.value)}
                 placeholder="Max nöbet"
               />
+            </td>
+            <td>
+              <select
+                className="form-select"
+                value={newShiftDuration}
+                onChange={(e) => setNewShiftDuration(e.target.value)}
+                placeholder="Shift süresi"
+              >
+                <option value="12">12</option>
+                <option value="24">24</option>
+              </select>
             </td>
             <td></td>
             <td className="text-center align-middle">

@@ -131,11 +131,18 @@ const Hospital = () => {
     });
   };
 
-  // Kıdem tablosu - Kıdem adı değişince
   const handleSeniorityNameChange = (index, newName) => {
     setDetailedSeniorities((prev) => {
       const updated = [...prev];
       updated[index].seniority_name = newName;
+      return updated;
+    });
+  };
+
+  const handleShiftDurationChange = (index, newDuration) => {
+    setDetailedSeniorities((prev) => {
+      const updated = [...prev];
+      updated[index].shift_duration = newDuration;
       return updated;
     });
   };
@@ -155,7 +162,7 @@ const Hospital = () => {
           id: response.id,
           seniority_name: seniorityName,
           max_shifts_per_month: maxShifts,
-          // Yeni eklenen kıdemde tüm alanları aktif saymak istersen:
+          shift_duration: "12", // ← bu satırı ekle
           shift_area_names: shiftAreas.map((a) => a.area_name),
         },
       ]);
@@ -184,6 +191,7 @@ const Hospital = () => {
         id: sen.id,
         seniority_name: sen.seniority_name,
         max_shifts_per_month: sen.max_shifts_per_month,
+        shift_duration: sen.shift_duration,
         shift_area_ids: [
           ...new Set(
             sen.shift_area_names
@@ -287,6 +295,7 @@ const Hospital = () => {
               shiftAreas={shiftAreas}
               handleMaxShiftsChange={handleMaxShiftsChange}
               handleSeniorityNameChange={handleSeniorityNameChange}
+              handleShiftDurationChange={handleShiftDurationChange}
               handleSaveSeniorityChanges={handleSaveSeniorityChanges}
               handleAddSeniority={handleAddSeniority}
               handleDeleteSeniority={handleDeleteSeniority}
@@ -296,6 +305,7 @@ const Hospital = () => {
               shiftAreas={shiftAreas}
               handleShiftAreaNameChange={handleShiftAreaNameChange}
               handleMinDoctorsPerAreaChange={handleMinDoctorsPerAreaChange}
+              handleShiftDurationChange={handleShiftDurationChange}
               handleSaveShiftAreaChanges={handleSaveShiftAreaChanges}
               handleAddShiftArea={handleAddShiftArea}
               handleDeleteShiftArea={handleDeleteShiftArea}

@@ -5,7 +5,7 @@ export default function HomePage() {
     <div className="d-flex flex-column background-gradient min-vh-100">
       <div className="container-fluid p-5 flex-grow-1">
         <div className="d-flex justify-content-center mb-4 pb-3">
-          <img src="/henas-bot.png" alt="Henas Bot" width="150" height="150" />
+          <img src="henas-bot.png" alt="Henas Bot" width="150" height="150" />
         </div>
 
         {/* Adımlar Kartları */}

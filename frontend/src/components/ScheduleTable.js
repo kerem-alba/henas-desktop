@@ -88,6 +88,7 @@ const ScheduleTable = ({ doctors, detailedSeniorities, scheduleData, firstDay, d
           seniority_id: matchedSeniority?.id,
           shift_areas: matchedSeniority?.shift_area_ids,
           shift_count: shiftCount,
+          shift_duration: matchedSeniority?.shift_duration,
           mandatory_leaves: mandatoryLeaves.filter((leave) => leave[0] === doctor.id).map(([_, day, shiftIdx]) => [day, shiftIdx]),
           optional_leaves: optionalLeaves.filter((leave) => leave[0] === doctor.id).map(([_, day, shiftIdx]) => [day, shiftIdx]),
         };
@@ -130,12 +131,14 @@ const ScheduleTable = ({ doctors, detailedSeniorities, scheduleData, firstDay, d
             <th className="col-1">Kıdem</th>
             <th className="col-1">Nöbet Alanları</th>
             <th className="col-1">Nöbet Sayısı</th>
+            <th className="col-1">12/24 Saat</th>
             <th className="col-1 text-center">İzinler</th>
           </tr>
         </thead>
         <tbody>
           {doctors.map((doctor, index) => {
-            const matchedSeniority = detailedSeniorities.find((s) => s.seniority_name === doctor.seniority_name);
+            const matchedSeniorityIndex = detailedSeniorities.findIndex((s) => s.seniority_name === doctor.seniority_name);
+            const matchedSeniority = detailedSeniorities[matchedSeniorityIndex];
             const shiftAreas = matchedSeniority?.shift_area_names.join(", ") || "Alan Yok";
 
             return (
@@ -172,6 +175,9 @@ const ScheduleTable = ({ doctors, detailedSeniorities, scheduleData, firstDay, d
                       }}
                     />
                   </td>
+
+                  <td className="text-center">{matchedSeniority?.shift_duration || "12"}</td>
+
                   <td className="text-center">
                     <button className="btn btn-sm btn-outline-light" onClick={() => toggleRow(doctor.id)}>
                       {expandedRow === doctor.id ? "İzinleri Gizle" : "İzinleri Göster"}
@@ -181,7 +187,7 @@ const ScheduleTable = ({ doctors, detailedSeniorities, scheduleData, firstDay, d
 
                 {expandedRow === doctor.id && (
                   <tr>
-                    <td colSpan="7" className="p-0">
+                    <td colSpan="8" className="p-0">
                       <div className="bg-light p-3">
                         <LeavesTable
                           doctorId={doctor.id}

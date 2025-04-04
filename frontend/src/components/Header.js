@@ -1,14 +1,15 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
       <div className="container-fluid px-5 mx-3">
-        <a className="navbar-brand fw-bold d-flex align-items-center fs-4" href="/">
-          <img src="/henas-bot.png" alt="Nöbet Asistanı Logo" width="50" height="50" className="me-2" />
+        <Link className="navbar-brand fw-bold d-flex align-items-center fs-4" to="/">
+          <img src="henas-bot.png" alt="Nöbet Asistanı Logo" width="50" height="50" className="me-2" />
           HENAS - Hekim Nöbet Asistanı
-        </a>
+        </Link>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span className="navbar-toggler-icon"></span>
         </button>
@@ -20,36 +21,36 @@ const Header = () => {
               </a>
               <ul className="dropdown-menu">
                 <li>
-                  <a className="dropdown-item" href="/schedule-data">
+                  <Link className="dropdown-item" to="/schedule-data">
                     📊 Nöbet Listesi Verileri
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a className="dropdown-item" href="/create-schedule">
+                  <Link className="dropdown-item" to="/create-schedule">
                     ➕ Nöbet Listesi Oluştur
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a className="dropdown-item" href="/schedule-lists">
+                  <Link className="dropdown-item" to="/schedule-lists">
                     📁 Kayıtlı Nöbet Listeleri
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="/hospital">
+              <Link className="nav-link" to="/hospital">
                 ⚕️ Hastanem
-              </a>
+              </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="/settings">
+              <Link className="nav-link" to="/settings">
                 ⚙️ Ayarlar
-              </a>
+              </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="/profile">
+              <Link className="nav-link" to="/profile">
                 👤 Profil
-              </a>
+              </Link>
             </li>
           </ul>
         </div>

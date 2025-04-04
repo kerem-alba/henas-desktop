@@ -4,11 +4,11 @@ import { getSettings, updateSettings } from "../services/apiService";
 import "rc-slider/assets/index.css";
 
 const generationMap = {
-  1: 2000,
-  2: 8000,
-  3: 15000,
-  4: 40000,
-  5: 80000,
+  1: 5,
+  2: 15000,
+  3: 30000,
+  4: 60000,
+  5: 120000,
 };
 
 const Settings = () => {

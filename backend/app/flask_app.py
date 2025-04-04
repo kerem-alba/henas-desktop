@@ -1,40 +1,23 @@
+import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, create_refresh_token
 from config.secrets import Config
 import config.globals as g
+from config import init_db
 
+db_mode = os.getenv("DB_MODE")
 
-from services.database_service import (
-    get_detailed_doctors,
-    get_doctors,
-    add_doctor,
-    update_all_doctors,
-    delete_doctor,
-    get_seniority,
-    get_detailed_seniority,
-    add_seniority,
-    update_all_seniorities,
-    delete_seniority,
-    get_shift_areas,
-    add_shift_area,
-    update_all_shift_areas,
-    delete_shift_area,
-    get_all_schedule_data,
-    get_schedule_data_by_id,
-    update_schedule_data,
-    add_schedule_data,
-    delete_schedule_data,
-    get_schedule_by_id,
-    add_schedule,
-    delete_schedule,
-    get_all_schedules,
-    authenticate_user,
-)
+if db_mode == "local":
+    from services import database_service_postgres as db
+elif db_mode == "desktop":
+    from services import database_service_sqlite as db
+
 from run_algorithm import run_algorithm
 import json
 
 
+init_db.init_db()
 app = Flask(__name__)
 app.config.from_object(Config)
 jwt = JWTManager(app)  
@@ -51,7 +34,7 @@ def login():
     if not username or not password:
         return jsonify({"error": "Kullanıcı adı ve şifre gerekli"}), 400
 
-    user_id = authenticate_user(username, password)
+    user_id = db.authenticate_user(username, password)
     
     if user_id:
         access_token = create_access_token(identity=str(user_id))  
@@ -78,7 +61,7 @@ def refresh():
 @app.route("/get-doctors", methods=["GET"])
 def get_detailed_doctors_endpoint():
     try:
-        doctors = get_detailed_doctors()
+        doctors = db.get_detailed_doctors()
 
         formatted_doctors = [
             {
@@ -122,7 +105,7 @@ def run_algorithm_endpoint():
 @app.route("/doctors", methods=["GET"])
 def list_doctors_endpoint():
     try:
-        doctors = get_doctors()
+        doctors = db.get_doctors()
         return jsonify(doctors)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -136,7 +119,7 @@ def add_doctor_endpoint():
         if not data.get("name") or not data.get("seniority_id"):
             return jsonify({"error": "name and seniority_id are required"}), 400
 
-        new_id = add_doctor(data)
+        new_id = db.add_doctor(data)
 
         return jsonify({"id": new_id, "message": "Doctor added successfully"}), 201
 
@@ -148,7 +131,7 @@ def add_doctor_endpoint():
 def update_doctors_endpoint():
     try:
         data = request.json
-        update_all_doctors(data)
+        db.update_all_doctors(data)
         return jsonify({"message": "Doctors updated successfully"}), 200
     except Exception as e:
         print("Hata Ayrıntısı:", e)
@@ -159,7 +142,7 @@ def update_doctors_endpoint():
 @app.route("/doctors/<int:doctor_id>", methods=["DELETE"])
 def delete_doctor_endpoint(doctor_id):
     try:
-        delete_doctor(doctor_id)
+        db.delete_doctor(doctor_id)
         return jsonify({"message": "Doctor deleted successfully"}), 200
 
     except Exception as e:
@@ -169,7 +152,7 @@ def delete_doctor_endpoint(doctor_id):
 @app.route("/seniority", methods=["GET"])
 def list_seniority():
     try:
-        seniority = get_seniority()
+        seniority = db.get_seniority()
         return jsonify(seniority), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -177,7 +160,7 @@ def list_seniority():
 @app.route("/seniority/detailed", methods=["GET"])
 def list_detailed_seniority():
     try:
-        seniority = get_detailed_seniority()
+        seniority = db.get_detailed_seniority()
         return jsonify(seniority), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -193,11 +176,11 @@ def add_seniority_endpoint():
 
         # Eğer shift_area_ids boşsa, tüm shift_areas ID’lerini al
         if not data.get("shift_area_ids"):
-            shift_areas = get_shift_areas()  # Mevcut methodu kullan
+            shift_areas = db.get_shift_areas()  # Mevcut methodu kullan
             data["shift_area_ids"] = [area["id"] for area in shift_areas.values()]
 
         # Servis fonksiyonunu çağır (veritabanı işlemi burada yapılır)
-        new_id = add_seniority(data)
+        new_id = db.add_seniority(data)
 
         return jsonify({"id": new_id, "message": "Kıdem başarıyla eklendi!"}), 201
 
@@ -211,7 +194,7 @@ def add_seniority_endpoint():
 def update_seniorities_endpoint():
     try:
         data = request.json
-        update_all_seniorities(data)
+        db.update_all_seniorities(data)
         return jsonify({"message": "Seniorities updated successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -219,7 +202,7 @@ def update_seniorities_endpoint():
 @app.route("/seniority/<int:seniority_id>", methods=["DELETE"])
 def delete_seniority_endpoint(seniority_id):
     try:
-        delete_seniority(seniority_id)
+        db.delete_seniority(seniority_id)
         return jsonify({"message": "Seniority deleted successfully"}), 200
 
     except Exception as e:
@@ -229,7 +212,7 @@ def delete_seniority_endpoint(seniority_id):
 @app.route("/shift-areas", methods=["GET"])
 def list_shift_areas():
     try:
-        shift_areas = get_shift_areas()
+        shift_areas = db.get_shift_areas()
         return jsonify(shift_areas), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -243,7 +226,7 @@ def add_shift_area_endpoint():
         if not data.get("area_name") or not data.get("min_doctors_per_area"):
             return jsonify({"error": "area_name and min_doctors_per_area are required"}), 400
 
-        new_id = add_shift_area(data)
+        new_id = db.add_shift_area(data)
         return jsonify({"id": new_id, "message": "Shift area added successfully"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -252,7 +235,7 @@ def add_shift_area_endpoint():
 def update_shift_areas_endpoint():
     try:
         data = request.json
-        update_all_shift_areas(data)
+        db.update_all_shift_areas(data)
         return jsonify({"message": "Shift areas updated successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -261,7 +244,7 @@ def update_shift_areas_endpoint():
   
 def delete_shift_area_endpoint(shift_area_id):
     try:
-        delete_shift_area(shift_area_id)
+        db.delete_shift_area(shift_area_id)
         return jsonify({"message": "Shift area deleted successfully"}), 200
 
     except Exception as e:
@@ -271,7 +254,7 @@ def delete_shift_area_endpoint(shift_area_id):
   
 def get_schedule_data_endpoint(schedule_id):
     try:
-        schedule = get_schedule_data_by_id(schedule_id)
+        schedule = db.get_schedule_data_by_id(schedule_id)
 
         if not schedule:
             return jsonify({"error": "Schedule not found"}), 404
@@ -286,7 +269,7 @@ def get_schedule_data_endpoint(schedule_id):
   
 def get_all_schedule_data_endpoint():
     try:
-        schedule_data = get_all_schedule_data()
+        schedule_data = db.get_all_schedule_data()
         return jsonify(schedule_data), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -300,7 +283,7 @@ def add_schedule_data_endpoint():
         if not data.get("name") or not data.get("schedule") or not data.get("first_day") or not data.get("days_in_month"):
             return jsonify({"error": "name and schedule (JSON) are required"}), 400
 
-        new_id = add_schedule_data(
+        new_id = db.add_schedule_data(
             data["name"], 
             data["schedule"], 
             data["first_day"], 
@@ -320,7 +303,7 @@ def update_schedule_data_endpoint(schedule_id):
         if not data.get("name") or not data.get("schedule"):
             return jsonify({"error": "name and schedule (JSON) are required"}), 400
 
-        update_schedule_data(schedule_id, data["name"], data["schedule"])
+        db.update_schedule_data(schedule_id, data["name"], data["schedule"])
 
         return jsonify({"message": "Schedule data updated successfully"}), 200
 
@@ -331,7 +314,7 @@ def update_schedule_data_endpoint(schedule_id):
   
 def delete_schedule_data_endpoint(schedule_id):
     try:
-        delete_schedule_data(schedule_id)
+        db.delete_schedule_data(schedule_id)
         return jsonify({"message": "Schedule data deleted successfully"}), 200
 
     except Exception as e:
@@ -343,7 +326,7 @@ def delete_schedule_data_endpoint(schedule_id):
 def get_schedule_by_id_endpoint(schedule_id):
     """Belirtilen ID'ye sahip schedule'ı getirir."""
     try:
-        schedule = get_schedule_by_id(schedule_id)
+        schedule = db.get_schedule_by_id(schedule_id)
         if schedule:
             return jsonify(schedule), 200
         else:
@@ -357,7 +340,7 @@ def get_schedule_by_id_endpoint(schedule_id):
 def delete_schedule_endpoint(schedule_id):
     """Belirtilen ID'ye sahip schedule'ı siler."""
     try:
-        delete_schedule(schedule_id)
+        db.delete_schedule(schedule_id)
         return jsonify({"message": "Schedule deleted successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -365,7 +348,7 @@ def delete_schedule_endpoint(schedule_id):
 @app.route("/schedules", methods=["GET"])
 def list_schedules_endpoint():
     try:
-        schedules = get_all_schedules()
+        schedules = db.get_all_schedules()
         return jsonify(schedules)
     except Exception as e:
         return jsonify({"error": str(e)}), 500

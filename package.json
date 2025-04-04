@@ -2,9 +2,10 @@
   "name": "henas-desktop",
   "version": "1.0.0",
   "description": "**Henas**, hastanelerde nöbet usulü çalışan doktorlar için **ideal nöbet listesi oluşturmayı** hedefleyen bir uygulamadır.  \r Kullanıcı dostu bir arayüzle, doktorların **nöbet planlama sürecini kolaylaştıran** ve **adil bir dağılım sağlayan** bir sistem geliştirilmiştir.",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
   },
   "keywords": [],
   "author": "",

@@ -1,12 +1,19 @@
+import os
 from models.doctor import Doctor
-from genetic_algorithm.genetic_algorithm import run_genetic_algorithm
 from hill_climbing_algorithm.hill_climbing_algorithm import run_hill_climbing
-from services.database_service import get_schedule_data_by_id
 import time
 
-def run_algorithm(schedule_data_id):
-    schedule_data = get_schedule_data_by_id(schedule_data_id)
+db_mode = os.getenv("DB_MODE")
 
+if db_mode == "local":
+    from services import database_service_postgres as db
+elif db_mode == "desktop":
+    from services import database_service_sqlite as db
+
+
+def run_algorithm(schedule_data_id):
+    print("Running algorithm...")
+    schedule_data = db.get_schedule_data_by_id(schedule_data_id)
     doctors = [
         Doctor(
             doc["code"],
@@ -14,6 +21,7 @@ def run_algorithm(schedule_data_id):
             doc["seniority_id"],
             int(doc["shift_count"]),
             doc["shift_areas"],
+            doc["shift_duration"],
             doc["optional_leaves"],
             doc["mandatory_leaves"],
         )
@@ -22,9 +30,7 @@ def run_algorithm(schedule_data_id):
 
     start_time = time.perf_counter()
 
-    # run_genetic_algorithm(doctors)
     population, schedule_id = run_hill_climbing(doctors, schedule_data_id)
-    print("000")
 
     end_time = time.perf_counter()
 

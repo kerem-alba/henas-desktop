@@ -8,14 +8,14 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import PrivateRoute from "./components/PrivateRoute"; // Güncellenmiş PrivateRoute
 
 function App() {
-  const isLoginPage = window.location.pathname === "/login";
+  const isLoginPage = window.location.hash === "/login";
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       {!isLoginPage && <Header />}
       <Routes>
         <Route path="/login" element={<Login />} />
@@ -32,7 +32,7 @@ function App() {
           <Route path="/settings" element={<Settings />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 

@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+export const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 export const login = async (username, password) => {
   try {
@@ -130,15 +130,14 @@ export const getDetailedSeniorities = async () => {
   }
 };
 
-export const addSeniority = async (name, maxShifts, shiftAreas = []) => {
+export const addSeniority = async (name, maxShifts, shiftAreas = [], shiftDuration = "12") => {
   try {
     const requestData = {
       seniority_name: name,
       max_shifts_per_month: maxShifts,
-      shift_area_ids: shiftAreas.length > 0 ? shiftAreas.map((area) => area.id) : [], // Eğer boşsa, direkt []
+      shift_area_ids: shiftAreas.length > 0 ? shiftAreas.map((area) => area.id) : [],
+      shift_duration: shiftDuration,
     };
-
-    console.log("Gönderilen veri:", requestData); // Konsolda kontrol et
 
     const response = await fetch(`${API_BASE_URL}/seniority`, {
       method: "POST",

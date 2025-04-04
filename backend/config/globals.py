@@ -14,3 +14,5 @@ week_days_map = {
 hospital_db_name = None
 
 MAX_GENERATIONS = 2000 
+
+code_to_duration = {}
