@@ -23,3 +23,6 @@ penalty_weekend_free = 50  # Haftasonu boş olmama cezası
 penalty_two_night_shifts = 40  # 2 gece üst üste nöbet cezası
 penalty_hierarchy_mismatch = 10  # Nöbet alanındaki hiyerarşi hatası cezası
 penalty_shift_on_leave = 50  # İzinli günlerde nöbet tutma cezası
+
+log_to_file = True  # Log dosyasına yazma durumu
+log_file_path = "generation_log.txt"  # Log dosyası yolu

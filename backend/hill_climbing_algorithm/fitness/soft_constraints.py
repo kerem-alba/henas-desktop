@@ -101,8 +101,8 @@ def check_weekend_free(schedule, doctors, schedule_data_id, log):
         has_free_weekend = False
 
         for week_start in range(0, total_days, 7):
-            saturday_index = week_start + (5 - g.week_start_day) % 7
-            sunday_index = week_start + (6 - g.week_start_day) % 7
+            saturday_index = week_start + (6 - g.week_start_day) % 7
+            sunday_index = week_start + (7 - g.week_start_day) % 7
 
             if saturday_index >= total_days or sunday_index >= total_days:
                 continue

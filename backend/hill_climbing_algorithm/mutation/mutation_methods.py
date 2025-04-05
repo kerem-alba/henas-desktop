@@ -1,5 +1,5 @@
 import random
-from config.algorithm_config import min_doctors_per_shift, max_doctors_per_shift
+from config.algorithm_config import min_doctors_per_shift, max_doctors_per_shift, log_to_file, log_file_path
 import config.globals as g
 
 
@@ -11,7 +11,6 @@ def mutate_schedule(schedule, doc_rate, slide_rate, shift_rate, day_rate, doc24_
         k=1
     )[0]
 
-    # Seçilen mutasyon türüne göre mutasyon uygula
     if mutation_type == "doctor_swap":
         return doctor_swap(schedule)
     elif mutation_type == "doctor_slide":
@@ -49,11 +48,11 @@ def doctor_swap(schedule):
 
             shift1[idx1], shift2[idx2] = doc2, doc1
 
-            with open("generation_log.txt", "a") as log_file:
-                log_file.write(
-                    f"Swap (12'lik): Dr. {doc1} (Day {day1_index + 1}, Shift {shift1_index + 1}) "
-                    f"Dr. {doc2} (Day {day2_index + 1}, Shift {shift2_index + 1})\n"
-                )
+            if log_to_file:
+                with open(log_file_path, "a") as log_file:
+                    log_file.write(
+                        f"Swap (12'lik): Dr. {doc1} (Day {day1_index + 1}, Shift {shift1_index + 1}) "
+                        f"Dr. {doc2} (Day {day2_index + 1}, Shift {shift2_index + 1})\n")
 
             return schedule
 
@@ -67,7 +66,6 @@ def doctor_slide(schedule):
         day_from = random.randint(0, len(schedule) - 1)
         shift_from = random.randint(0, len(schedule[day_from]) - 1)
 
-        # Uygun doktor bul
         candidates = [d for d in schedule[day_from][shift_from] if g.code_to_duration.get(d) == "12"]
         if len(candidates) > 0 and len(schedule[day_from][shift_from]) > min_doctors_per_shift:
             doctor_to_slide = random.choice(candidates)
@@ -87,42 +85,41 @@ def doctor_slide(schedule):
     schedule[day_from][shift_from].remove(doctor_to_slide)
     schedule[day_to][shift_to].append(doctor_to_slide)
 
-    with open("generation_log.txt", "a") as log_file:
-        log_file.write(
-            f"Slide (12'lik): Dr. {doctor_to_slide} moved from Day {day_from + 1}, Shift {shift_from + 1} "
-            f"to Day {day_to + 1}, Shift {shift_to + 1}\n"
-        )
+    if log_to_file:
+        with open(log_file_path, "a") as log_file:
+            log_file.write(
+                f"Slide (12'lik): Dr. {doctor_to_slide} moved from Day {day_from + 1}, Shift {shift_from + 1} "
+                f"to Day {day_to + 1}, Shift {shift_to + 1}\n")
 
     return schedule
 
 
 def shift_swap(schedule):
-    # Rastgele iki gün seç
     day1_index, day2_index = random.sample(range(len(schedule)), 2)
     day1, day2 = schedule[day1_index], schedule[day2_index]
 
-    # Rastgele iki shift seç
     shift1_index = random.randint(0, len(day1) - 1)
     shift2_index = random.randint(0, len(day2) - 1)
 
-    # İki shift'i yer değiştir
     day1[shift1_index], day2[shift2_index] = day2[shift2_index], day1[shift1_index]
     
-    with open("generation_log.txt", "a") as log_file:
-        log_file.write(
-            f"Shift Swap: Day {day1_index + 1} Shift {shift1_index + 1} "
-            f"Day {day2_index + 1} Shift {shift2_index + 1}\n"
-        )
+    if log_to_file:
+        with open(log_file_path, "a") as log_file:
+            log_file.write(
+                f"Shift Swap: Day {day1_index + 1} Shift {shift1_index + 1} "
+                f"Day {day2_index + 1} Shift {shift2_index + 1}\n"
+            )
     return schedule
 
 
 def day_swap(schedule):
     """İki günü tamamen yer değiştirir."""
-    idx1, idx2 = random.sample(range(len(schedule)), 2)  # İki günün indeksini seç
-    schedule[idx1], schedule[idx2] = schedule[idx2], schedule[idx1]  # Yer değiştir
+    idx1, idx2 = random.sample(range(len(schedule)), 2) 
+    schedule[idx1], schedule[idx2] = schedule[idx2], schedule[idx1] 
 
-    with open("generation_log.txt", "a") as log_file:
-        log_file.write(f"Day Swap: Day {idx1 + 1} <-> Day {idx2 + 1}\n")
+    if log_to_file:
+        with open(log_file_path, "a") as log_file:
+            log_file.write(f"Day Swap: Day {idx1 + 1} <-> Day {idx2 + 1}\n")
 
     return schedule
 
@@ -144,21 +141,18 @@ def doctor24_swap(schedule):
 
         return None, None
 
-    # İlk doktoru bul
     day1_index, doc1 = find_valid_24_doctor()
     if doc1 is None:
-        return schedule  # Swap yapılamaz
+        return schedule 
 
-    # İkinci doktoru bul (aynı gün olmamalı)
     for _ in range(100):
         day2_index, doc2 = find_valid_24_doctor()
         if doc2 and doc2 != doc1 and day2_index != day1_index:
             break
     else:
-        return schedule  # İkinci doktor da bulunamazsa
+        return schedule 
 
-    # Swap yap
-    for shift_index in [0, 1]:  # gündüz ve gece shiftlerinde yer değiştir
+    for shift_index in [0, 1]: 
         schedule[day1_index][shift_index] = [
             doc2 if d == doc1 else d for d in schedule[day1_index][shift_index]
         ]
@@ -166,17 +160,16 @@ def doctor24_swap(schedule):
             doc1 if d == doc2 else d for d in schedule[day2_index][shift_index]
         ]
 
-    with open("generation_log.txt", "a") as log_file:
-        log_file.write(
-            f"24h Swap: Dr. {doc1} (Day {day1_index + 1}) <-> Dr. {doc2} (Day {day2_index + 1})\n"
-        )
+    if log_to_file:  
+        with open(log_file_path, "a") as log_file:  
+            log_file.write(
+                f"24h Swap: Dr. {doc1} (Day {day1_index + 1}) <-> Dr. {doc2} (Day {day2_index + 1})\n")
 
     return schedule
 
 def doctor24_slide(schedule):
     max_tries = 100
 
-    # 🔍 1. Uygun doktoru ve bulunduğu günü bul
     for _ in range(max_tries):
         day_from = random.randint(0, len(schedule) - 1)
         day = schedule[day_from]
@@ -188,12 +181,11 @@ def doctor24_slide(schedule):
                 doctor_to_move = doctor_code
                 break
         else:
-            continue  # bu günde uygun doktor yok → diğer güne geç
+            continue 
         break
     else:
-        return schedule  # bulunamadı
+        return schedule
 
-    # 🔁 2. Hedef günü bul
     for _ in range(max_tries):
         day_to = random.randint(0, len(schedule) - 1)
         if day_to != day_from:
@@ -203,9 +195,8 @@ def doctor24_slide(schedule):
             ):
                 break
     else:
-        return schedule  # uygun hedef gün yok
+        return schedule  
 
-    # 🔁 3. Doktoru çıkar (sadece birer kez) ve hedef güne ekle
     if doctor_to_move in schedule[day_from][0]:
         schedule[day_from][0].remove(doctor_to_move)
     if doctor_to_move in schedule[day_from][1]:
@@ -214,10 +205,10 @@ def doctor24_slide(schedule):
     schedule[day_to][0].append(doctor_to_move)
     schedule[day_to][1].append(doctor_to_move)
 
-    with open("generation_log.txt", "a") as log_file:
-        log_file.write(
-            f"24h Slide: Dr. {doctor_to_move} moved from Day {day_from + 1} -> Day {day_to + 1}\n"
-        )
+    if log_to_file:
+        with open(log_file_path, "a") as log_file:
+            log_file.write(
+                f"24h Slide: Dr. {doctor_to_move} moved from Day {day_from + 1} -> Day {day_to + 1}\n")
 
     return schedule
 
