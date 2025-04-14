@@ -32,6 +32,7 @@ def authenticate_user(username, password):
 
     return None
 
+
 def connect_to_hospital_db():
     """ Kullanıcının hastane veritabanına bağlan """
     if g.hospital_db_name in HOSPITAL_DB_CONFIGS:

@@ -1,40 +1,50 @@
-import psycopg2
 import json
 import os
 import config.globals as g
 from flask_bcrypt import Bcrypt
-from psycopg2.extras import RealDictCursor
+import sqlite3
 from dotenv import load_dotenv
 load_dotenv()
 
-import sqlite3
 
 bcrypt = Bcrypt()
 
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "mydata.db")
+DB_PATH = os.path.join(os.path.dirname(__file__), "..", "mydata.db")
+print(f"SQLite DB Path: {DB_PATH}")
+print(f"DB exists: {os.path.exists(DB_PATH)}")
 
 def connect_to_db():
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    return conn
+    print(f"Attempting to connect to SQLite at: {DB_PATH}")
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        # Test the connection
+        cursor = conn.cursor()
+        cursor.execute("SELECT 1")
+        print("Successfully connected to SQLite database")
+        return conn
+    except sqlite3.Error as e:
+        print(f"SQLite connection error: {e}")
+        raise
 
 
 def authenticate_user(username, password):
-    auth_conn = psycopg2.connect(os.getenv("AUTH_DB_URL"), sslmode="disable")
-    auth_cur = auth_conn.cursor(cursor_factory=RealDictCursor)
+    conn = sqlite3.connect(os.path.join(os.path.dirname(__file__), "..", "mydata.db"))
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
 
-    auth_cur.execute("SELECT id, password_hash, hospital_db_name FROM users WHERE username = %s", (username,))
-    user = auth_cur.fetchone()
+    cur.execute("SELECT id, password_hash, hospital_db_name FROM users WHERE username = ?", (username,))
+    row = cur.fetchone()
+    conn.close()
 
-    auth_cur.close()
-    auth_conn.close()
-
-    if user and bcrypt.check_password_hash(user["password_hash"], password):
-        g.hospital_db_name = user["hospital_db_name"]
-        return {"user_id": user["id"], "hospital_db": g.hospital_db_name}
+    if row and bcrypt.check_password_hash(row["password_hash"], password):
+        g.hospital_db_name = row["hospital_db_name"]
+        return {"user_id": row["id"], "hospital_db": g.hospital_db_name}
 
     return None
+
+
 
 
 def get_detailed_doctors():
@@ -271,9 +281,10 @@ def update_all_shift_areas(data):
         cur = conn.cursor()
 
         for area in data:
-            cur.execute(
-                "UPDATE shift_areas SET area_name = ?, min_doctors_per_area = ? WHERE id = ?",
-                (area["area_name"], area["min_doctors_per_area"], area["id"])
+            cur.execute( 
+                "UPDATE shift_areas SET area_name = ?, min_doctors_per_area = ?, shift_duration = ? WHERE id = ?",
+                (area["area_name"], area["min_doctors_per_area"], area["shift_duration"], area["id"])
+
             )
 
         conn.commit()

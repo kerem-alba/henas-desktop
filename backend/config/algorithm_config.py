@@ -25,4 +25,6 @@ penalty_hierarchy_mismatch = 10  # Nöbet alanındaki hiyerarşi hatası cezası
 penalty_shift_on_leave = 50  # İzinli günlerde nöbet tutma cezası
 
 log_to_file = True  # Log dosyasına yazma durumu
-log_file_path = "generation_log.txt"  # Log dosyası yolu
+import os
+file_path = os.path.join(os.path.dirname(__file__), "..", "generation_log.txt")
+log_file_path = os.path.abspath(file_path)

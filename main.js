@@ -6,10 +6,12 @@ let mainWindow;
 let flaskProcess;
 
 function createWindow() {
-  // React frontend build klasöründen index.html'i yükleyeceğiz
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
+    resizable: true,
+    fullscreen: false,
+    frame: true,
     webPreferences: {
       nodeIntegration: false,
     },
@@ -17,25 +19,42 @@ function createWindow() {
 
   mainWindow.loadFile(path.join(__dirname, "frontend", "build", "index.html"));
 
+  mainWindow.maximize();
+
+  mainWindow.webContents.on("did-finish-load", () => {
+    mainWindow.webContents.focus();
+  });
+
   mainWindow.on("closed", () => {
     mainWindow = null;
   });
 }
 
 function startFlask() {
-  const exePath = path.join(__dirname, "backend", "app.exe");
-  flaskProcess = execFile(exePath);
+  console.log("Starting Flask with DB_MODE=desktop");
+  const env = Object.assign({}, process.env, {
+    DB_MODE: "desktop",
+    FLASK_ENV: "development",
+    PYTHONUNBUFFERED: "1",
+  });
+
+  // Change this section to run Python directly instead of exe
+  const pythonPath = "python"; // or 'python3' depending on your system
+  const scriptPath = path.join(__dirname, "backend", "main.py");
+
+  console.log("Starting Flask from:", scriptPath);
+  flaskProcess = execFile(pythonPath, [scriptPath], { env });
 
   flaskProcess.stdout.on("data", (data) => {
-    console.log(`Flask: ${data}`);
+    console.log(`Flask stdout: ${data}`);
   });
 
   flaskProcess.stderr.on("data", (data) => {
-    console.error(`Flask Error: ${data}`);
+    console.log(`Flask stderr: ${data}`);
   });
 
-  flaskProcess.on("close", (code) => {
-    console.log(`Flask exited with code ${code}`);
+  flaskProcess.on("error", (err) => {
+    console.error("Failed to start Flask:", err);
   });
 }
 

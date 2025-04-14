@@ -1,7 +1,7 @@
 import sqlite3
 import os
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "mydata.db")
+DB_PATH = os.path.join(os.path.dirname(__file__), "..", "mydata.db")
 
 def init_db():
     if os.path.exists(DB_PATH):
@@ -23,7 +23,8 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             seniority_name TEXT NOT NULL,
             max_shifts_per_month INTEGER NOT NULL,
-            shift_area_ids TEXT
+            shift_area_ids TEXT,
+            shift_duration TEXT
         )
     """)
 

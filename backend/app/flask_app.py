@@ -21,7 +21,7 @@ init_db.init_db()
 app = Flask(__name__)
 app.config.from_object(Config)
 jwt = JWTManager(app)  
-CORS(app, resources={r"/*": {"origins": ["http://localhost:3000", "https://henas.vercel.app"]}})
+CORS(app, resources={r"/*": {"origins": ["http://localhost:3000"]}})
 
 
 @app.route("/login", methods=["POST"])
