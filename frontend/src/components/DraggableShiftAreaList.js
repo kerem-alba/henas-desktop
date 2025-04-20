@@ -21,6 +21,10 @@ export default function DraggableShiftAreaList({ allShiftAreas, activeAreaNames,
     setItems([...mappedActive, ...mappedPassive]);
   }, [allShiftAreas, activeAreaNames]);
 
+  useEffect(() => {
+    console.log("🔍 Gelen activeAreaNames:", activeAreaNames);
+  }, [activeAreaNames]);
+
   const handleDragEnd = (result) => {
     if (!result.destination) return;
 

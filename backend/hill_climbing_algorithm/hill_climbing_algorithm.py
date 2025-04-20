@@ -26,6 +26,8 @@ def run_hill_climbing(doctors, schedule_data_id):
     print("Running hill climbing algorithm...")
     g.shift_areas_data = db.get_shift_areas()
     schedule_data = db.get_schedule_data_by_id(schedule_data_id)
+    doc_rate, slide_rate, shift_rate, day_rate,doc24_slide_rate, doc24_swap_rate  = get_swap_rates()
+
 
     g.code_to_duration = {
         doc["code"]: doc["shift_duration"]
@@ -39,7 +41,6 @@ def run_hill_climbing(doctors, schedule_data_id):
     max_generations = g.MAX_GENERATIONS
     population = create_initial_population(doctors, daysInMonth)
     for generation in range(max_generations):
-        doc_rate, slide_rate, shift_rate, day_rate,doc24_slide_rate, doc24_swap_rate  = get_swap_rates(generation)
         for idx in range(len(population)):
             original = population[idx]
             original_fitness = calculate_fitness(original, doctors, schedule_data_id=None, log=False)
@@ -93,11 +94,8 @@ def process_population(population, doctors, schedule_data_id):
     return processed_population, schedule_id
 
 
-def get_swap_rates(generation):
-    if generation < 10000:
-        return doctor_swap_rate, doctor_slide_rate, shift_swap_rate, day_swap_rate, doctor24_swap_rate, doctor24_slide_rate
-    else:
-        return 0.3, 0.2, 0, 0.1, 0.2, 0.2
+def get_swap_rates():
+    return doctor_swap_rate, doctor_slide_rate, shift_swap_rate, day_swap_rate, doctor24_swap_rate, doctor24_slide_rate
 
 
 def sort_doctors_in_shifts(schedule):

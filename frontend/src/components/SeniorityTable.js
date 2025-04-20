@@ -10,6 +10,7 @@ const SeniorityTable = ({
   handleSaveSeniorityChanges,
   handleAddSeniority,
   handleDeleteSeniority,
+  handleShiftAreasChange,
 }) => {
   const [newSeniorityName, setNewSeniorityName] = useState("");
   const [newMaxShifts, setNewMaxShifts] = useState("");
@@ -63,11 +64,15 @@ const SeniorityTable = ({
               </td>
 
               <td>
+                {console.log("📦 shift_area_names for", seniority.seniority_name, ":", seniority.shift_area_names)}
+
                 <DraggableShiftAreaList
                   allShiftAreas={shiftAreas}
                   activeAreaNames={seniority.shift_area_names}
                   onUpdate={(updatedActiveNames) => {
-                    seniority.shift_area_names = updatedActiveNames;
+                    handleSeniorityNameChange(index, seniority.seniority_name);
+                    handleMaxShiftsChange(index, seniority.max_shifts_per_month);
+                    handleShiftAreasChange(index, updatedActiveNames);
                   }}
                 />
               </td>

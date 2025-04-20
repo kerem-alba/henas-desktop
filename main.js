@@ -38,20 +38,10 @@ function startFlask() {
     PYTHONUNBUFFERED: "1",
   });
 
-  // Change this section to run Python directly instead of exe
-  const pythonPath = "python"; // or 'python3' depending on your system
+  const pythonPath = "python";
   const scriptPath = path.join(__dirname, "backend", "main.py");
 
-  console.log("Starting Flask from:", scriptPath);
   flaskProcess = execFile(pythonPath, [scriptPath], { env });
-
-  flaskProcess.stdout.on("data", (data) => {
-    console.log(`Flask stdout: ${data}`);
-  });
-
-  flaskProcess.stderr.on("data", (data) => {
-    console.log(`Flask stderr: ${data}`);
-  });
 
   flaskProcess.on("error", (err) => {
     console.error("Failed to start Flask:", err);

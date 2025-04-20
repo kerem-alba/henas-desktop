@@ -15,14 +15,12 @@ print(f"SQLite DB Path: {DB_PATH}")
 print(f"DB exists: {os.path.exists(DB_PATH)}")
 
 def connect_to_db():
-    print(f"Attempting to connect to SQLite at: {DB_PATH}")
     try:
         conn = sqlite3.connect(DB_PATH)
         conn.row_factory = sqlite3.Row
         # Test the connection
         cursor = conn.cursor()
         cursor.execute("SELECT 1")
-        print("Successfully connected to SQLite database")
         return conn
     except sqlite3.Error as e:
         print(f"SQLite connection error: {e}")
@@ -175,15 +173,18 @@ def get_detailed_seniority():
     rows = cur.fetchall()
     conn.close()
 
+    shift_areas = get_shift_areas()  
     seniority_list = []
+
     for row in rows:
         area_ids = json.loads(row["shift_area_ids"]) if row["shift_area_ids"] else []
+        area_names = [name for name, area in shift_areas.items() if area["id"] in area_ids]
         seniority_list.append({
             "id": row["id"],
             "seniority_name": row["seniority_name"],
             "max_shifts_per_month": row["max_shifts_per_month"],
             "shift_duration": row["shift_duration"],
-            "shift_area_names": [],
+            "shift_area_names": area_names, 
             "shift_area_ids": area_ids
         })
 
@@ -251,6 +252,8 @@ def get_shift_areas():
 
     cur.execute("SELECT id, area_name, min_doctors_per_area FROM shift_areas")
     rows = cur.fetchall()
+
+
     conn.close()
 
     return {
@@ -260,6 +263,7 @@ def get_shift_areas():
         }
         for row in rows
     }
+
 
 def add_shift_area(data):
     conn = connect_to_db()

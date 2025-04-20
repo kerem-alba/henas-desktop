@@ -143,29 +143,43 @@ def doctor24_swap(schedule):
 
     day1_index, doc1 = find_valid_24_doctor()
     if doc1 is None:
-        return schedule 
+        return schedule
 
     for _ in range(100):
         day2_index, doc2 = find_valid_24_doctor()
         if doc2 and doc2 != doc1 and day2_index != day1_index:
+            if doc2 in schedule[day1_index][0] or doc2 in schedule[day1_index][1]:
+                continue
+            if doc1 in schedule[day2_index][0] or doc1 in schedule[day2_index][1]:
+                continue
             break
     else:
-        return schedule 
+        return schedule
 
-    for shift_index in [0, 1]: 
-        schedule[day1_index][shift_index] = [
-            doc2 if d == doc1 else d for d in schedule[day1_index][shift_index]
-        ]
-        schedule[day2_index][shift_index] = [
-            doc1 if d == doc2 else d for d in schedule[day2_index][shift_index]
-        ]
+    # swap işlemi – sadece ilk eşleşmeyi değiştir
+    for shift_index in [0, 1]:
+        shift1 = schedule[day1_index][shift_index]
+        shift2 = schedule[day2_index][shift_index]
 
-    if log_to_file:  
-        with open(log_file_path, "a") as log_file:  
+        try:
+            i1 = shift1.index(doc1)
+            shift1[i1] = doc2
+        except ValueError:
+            pass
+
+        try:
+            i2 = shift2.index(doc2)
+            shift2[i2] = doc1
+        except ValueError:
+            pass
+
+    if log_to_file:
+        with open(log_file_path, "a") as log_file:
             log_file.write(
                 f"24h Swap: Dr. {doc1} (Day {day1_index + 1}) <-> Dr. {doc2} (Day {day2_index + 1})\n")
 
     return schedule
+
 
 def doctor24_slide(schedule):
     max_tries = 100

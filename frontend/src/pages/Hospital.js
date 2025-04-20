@@ -272,6 +272,11 @@ const Hospital = () => {
     }
   };
 
+  const handleShiftAreasChange = (index, newAreas) => {
+    console.log("✅ Shift alanları değişti:", index, newAreas);
+    setDetailedSeniorities((prev) => prev.map((s, i) => (i === index ? { ...s, shift_area_names: newAreas } : s)));
+  };
+
   return (
     <div className="d-flex flex-column background-gradient min-vh-100">
       <div className="container-fluid p-5 flex-grow-1">
@@ -299,6 +304,7 @@ const Hospital = () => {
               handleSaveSeniorityChanges={handleSaveSeniorityChanges}
               handleAddSeniority={handleAddSeniority}
               handleDeleteSeniority={handleDeleteSeniority}
+              handleShiftAreasChange={handleShiftAreasChange}
             />
 
             <ShiftAreasTable
