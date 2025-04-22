@@ -32,13 +32,13 @@ def authenticate_user(username, password):
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
 
-    cur.execute("SELECT id, password_hash, hospital_db_name FROM users WHERE username = ?", (username,))
+    cur.execute("SELECT id, password_hash FROM users WHERE username = ?", (username,))
     row = cur.fetchone()
     conn.close()
 
     if row and bcrypt.check_password_hash(row["password_hash"], password):
-        g.hospital_db_name = row["hospital_db_name"]
-        return {"user_id": row["id"], "hospital_db": g.hospital_db_name}
+        # For desktop mode, we don't need hospital_db_name
+        return {"user_id": row["id"]}
 
     return None
 
@@ -173,7 +173,7 @@ def get_detailed_seniority():
     rows = cur.fetchall()
     conn.close()
 
-    shift_areas = get_shift_areas()  
+    shift_areas = get_shift_areas()
     seniority_list = []
 
     for row in rows:
@@ -184,7 +184,7 @@ def get_detailed_seniority():
             "seniority_name": row["seniority_name"],
             "max_shifts_per_month": row["max_shifts_per_month"],
             "shift_duration": row["shift_duration"],
-            "shift_area_names": area_names, 
+            "shift_area_names": area_names,
             "shift_area_ids": area_ids
         })
 
@@ -285,7 +285,7 @@ def update_all_shift_areas(data):
         cur = conn.cursor()
 
         for area in data:
-            cur.execute( 
+            cur.execute(
                 "UPDATE shift_areas SET area_name = ?, min_doctors_per_area = ?, shift_duration = ? WHERE id = ?",
                 (area["area_name"], area["min_doctors_per_area"], area["shift_duration"], area["id"])
 
@@ -313,11 +313,11 @@ def get_schedule_data_by_id(schedule_id):
         cur = conn.cursor()
 
         cur.execute("""
-            SELECT id, schedule_data_name, schedule_data, first_day, days_in_month 
-            FROM schedule_data 
+            SELECT id, schedule_data_name, schedule_data, first_day, days_in_month
+            FROM schedule_data
             WHERE id = ?
         """, (schedule_id,))
-        
+
         row = cur.fetchone()
         conn.close()
 
@@ -363,12 +363,12 @@ def add_schedule_data(name, schedule_json, first_day, days_in_month):
 
         cur.execute(
             """
-            INSERT INTO schedule_data (schedule_data_name, schedule_data, first_day, days_in_month) 
+            INSERT INTO schedule_data (schedule_data_name, schedule_data, first_day, days_in_month)
             VALUES (?, ?, ?, ?)
             """,
             (name, json.dumps(schedule_json), first_day, days_in_month)
         )
-        
+
         conn.commit()
         schedule_id = cur.lastrowid
         conn.close()
@@ -403,7 +403,7 @@ def update_schedule_data(schedule_id, new_name, new_schedule_json):
             "UPDATE schedule_data SET schedule_data_name = ?, schedule_data = ? WHERE id = ?",
             (new_name, json.dumps(new_schedule_json), schedule_id)
         )
-        
+
         conn.commit()
         conn.close()
 
@@ -419,8 +419,8 @@ def get_schedule_by_id(schedule_id):
     cur = conn.cursor()
 
     cur.execute("""
-        SELECT id, schedule_data_id, schedule, fitness_score, log_messages, created_at 
-        FROM schedules 
+        SELECT id, schedule_data_id, schedule, fitness_score, log_messages, created_at
+        FROM schedules
         WHERE id = ?
     """, (schedule_id,))
 

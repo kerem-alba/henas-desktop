@@ -43,13 +43,30 @@ function startFlask() {
 
   flaskProcess = execFile(pythonPath, [scriptPath], { env });
 
+  flaskProcess.stdout.on("data", (data) => {
+    console.log(`Flask stdout: ${data}`);
+  });
+
+  flaskProcess.stderr.on("data", (data) => {
+    console.error(`Flask stderr: ${data}`);
+  });
+
   flaskProcess.on("error", (err) => {
     console.error("Failed to start Flask:", err);
   });
+
+  // Return a promise that resolves when the server is ready
+  return new Promise((resolve) => {
+    // Wait for Flask to start (give it a few seconds)
+    setTimeout(() => {
+      console.log("Flask server should be ready now");
+      resolve();
+    }, 3000);
+  });
 }
 
-app.whenReady().then(() => {
-  startFlask();
+app.whenReady().then(async () => {
+  await startFlask();
   createWindow();
 });
 

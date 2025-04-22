@@ -4,11 +4,33 @@ import os
 DB_PATH = os.path.join(os.path.dirname(__file__), "..", "mydata.db")
 
 def init_db():
-    if os.path.exists(DB_PATH):
-        return  # zaten varsa atla
-
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
+
+    # Check if users table exists
+    cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='users'")
+    if not cur.fetchone():
+        print("Creating users table...")
+        cur.execute("""
+            CREATE TABLE users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL UNIQUE,
+                password_hash TEXT NOT NULL
+            )
+        """)
+
+        # Add a test user (username: test, password: test1234)
+        from flask_bcrypt import Bcrypt
+        bcrypt = Bcrypt()
+        test_password_hash = bcrypt.generate_password_hash("test1234").decode('utf-8')
+        cur.execute("INSERT INTO users (username, password_hash) VALUES (?, ?)", ("test", test_password_hash))
+        conn.commit()
+        print("Test user created")
+
+    # Check if other tables exist
+    cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='doctors'")
+    if cur.fetchone():
+        return  # If doctors table exists, assume all tables exist
 
     cur.execute("""
         CREATE TABLE doctors (

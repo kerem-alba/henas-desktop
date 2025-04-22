@@ -22,8 +22,8 @@ def check_unequal_day_night_shifts(schedule, schedule_data_id, log):
     doctor_shift_counts = {}
 
     for day in schedule:
-        day_shift = day[0] 
-        night_shift = day[1] 
+        day_shift = day[0]
+        night_shift = day[1]
 
         for doctor in day_shift:
             doctor_shift_counts[doctor] = doctor_shift_counts.get(
@@ -62,7 +62,7 @@ def check_two_night_shifts(schedule,schedule_data_id, log):
 
         for doctor in night_shift:
             if g.code_to_duration.get(doctor) != "12":
-                continue 
+                continue
             if doctor not in doctor_night_shifts:
                 doctor_night_shifts[doctor] = []
 
@@ -150,19 +150,19 @@ def check_hierarchy_mismatch(schedule, doctors, schedule_data_id, log):
 
                 # 1) Birincil alan
                 if len(doctor.shift_areas) >= 1:
-                    primary_area = doctor.shift_areas[0]
+                    primary_area = int(doctor.shift_areas[0]) if isinstance(doctor.shift_areas[0], str) else doctor.shift_areas[0]
                     if primary_area in primary_counts:
                         primary_counts[primary_area] += 1
 
                 # 2) İkincil alan
                 if len(doctor.shift_areas) >= 2:
-                    secondary_area = doctor.shift_areas[1]
+                    secondary_area = int(doctor.shift_areas[1]) if isinstance(doctor.shift_areas[1], str) else doctor.shift_areas[1]
                     if secondary_area in secondary_counts:
                         secondary_counts[secondary_area] += 1
 
                 # 3) Üçüncül alan
                 if len(doctor.shift_areas) >= 3:
-                    tertiary_area = doctor.shift_areas[2]
+                    tertiary_area = int(doctor.shift_areas[2]) if isinstance(doctor.shift_areas[2], str) else doctor.shift_areas[2]
                     if tertiary_area in tertiary_counts:
                         tertiary_counts[tertiary_area] += 1
 
@@ -191,7 +191,7 @@ def check_hierarchy_mismatch(schedule, doctors, schedule_data_id, log):
                     penalty += fill_secondary * penalty_hierarchy_mismatch
                     missing -= fill_secondary
                     if log:
-                        log_text = f"{area_name} alanında {fill_secondary} doktor ikincil tercihinde çalışacak. - {day_index + 1}. gün {shift_index + 1}. shift" 
+                        log_text = f"{area_name} alanında {fill_secondary} doktor ikincil tercihinde çalışacak. - {day_index + 1}. gün {shift_index + 1}. shift"
                         db.add_log_messages(schedule_data_id, [log_text])
 
                 # Üçüncül alan
@@ -202,7 +202,7 @@ def check_hierarchy_mismatch(schedule, doctors, schedule_data_id, log):
                         penalty += fill_tertiary * 1.2 * penalty_hierarchy_mismatch
                         missing -= fill_tertiary
                         if log:
-                            log_text = f"{area_name} alanında {fill_tertiary} doktor üçüncü tercihinde çalışacak. - {day_index + 1}. gün {shift_index + 1}. shift"  
+                            log_text = f"{area_name} alanında {fill_tertiary} doktor üçüncü tercihinde çalışacak. - {day_index + 1}. gün {shift_index + 1}. shift"
                             db.add_log_messages(schedule_data_id, [log_text])
 
                 # Hâlâ eksik varsa hard_penalty
@@ -238,7 +238,7 @@ def check_leave_days(schedule, doctors, schedule_data_id, log):
                 if [day_index + 1, shift_index] in doctor.mandatory_leaves:
                     penalty += hard_penalty
                     if log:
-                        log_text = f"[!] Dr. {doctor_code}: Zorunlu izninde nöbet - {day_index + 1}. gün, {shift_index}. shift."                        
+                        log_text = f"[!] Dr. {doctor_code}: Zorunlu izninde nöbet - {day_index + 1}. gün, {shift_index}. shift."
                         db.add_log_messages(schedule_data_id, [log_text])
 
     return penalty
