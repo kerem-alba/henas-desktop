@@ -1,87 +1,91 @@
-# **HENAS - DOKTOR NÖBET LİSTESİ HAZIRLAMA UYGULAMASI**  
+# **HENAS - DOKTOR NÖBET LİSTESİ HAZIRLAMA UYGULAMASI**
 
-## 📝 PROJE HAKKINDA  
-**Henas**, hastanelerde nöbet usulü çalışan doktorlar için **ideal nöbet listesi oluşturmayı** hedefleyen bir uygulamadır.  
-Kullanıcı dostu bir arayüzle, doktorların **nöbet planlama sürecini kolaylaştıran** ve **adil bir dağılım sağlayan** bir sistem geliştirilmiştir.  
+## 📝 PROJE HAKKINDA
+
+**Henas**, hastanelerde nöbet usulü çalışan doktorlar için **ideal nöbet listesi oluşturmayı** hedefleyen bir uygulamadır.
+Kullanıcı dostu bir arayüzle, doktorların **nöbet planlama sürecini kolaylaştıran** ve **adil bir dağılım sağlayan** bir sistem geliştirilmiştir.
 
 ---
 
-## 🔗 CANLI SÜRÜM  
-Uygulamanın canlı demosuna aşağıdaki bağlantıdan ulaşabilirsin:  
+## 🔗 CANLI SÜRÜM
 
-👉 **[Henas Live](https://henas.vercel.app/)**  
+Uygulamanın canlı demosuna aşağıdaki bağlantıdan ulaşabilirsin:
 
-🔑 **Test Kullanıcı Bilgileri:**  
-- **Kullanıcı Adı:** test  
-- **Şifre:** test1234  
+👉 **[Henas Live](https://henas.vercel.app/)**
+
+🔑 **Test Kullanıcı Bilgileri:**
+
+- **Kullanıcı Adı:** test
+- **Şifre:** test1234
 
 Bu bilgileri kullanarak giriş yapabilir ve uygulamayı inceleyebilirsin.
 
 ---
 
-## 🔍 TEMEL ÖZELLİKLER  
+## 🔍 TEMEL ÖZELLİKLER
 
-- ✔️ **Kullanıcı Girişi:** OAuth tabanlı kimlik doğrulama  
-- ✔️ **Kıdem Bazlı Nöbet Dağılımı:** Daha kıdemli doktorlara uygun dağılım  
-- ✔️ **Esnek Nöbet Planlaması:** Kullanıcı tercihlerine göre esneklik  
-- ✔️ **Optimizasyon Algoritması:** Genetik Algoritma & Hill Climbing  
-- ✔️ **Manuel Düzenleme:** Kullanıcıların nöbet planında değişiklik yapabilmesi  
-- ✔️ **JSON Formatında Veri Saklama:** Esnek ve hızlı  
-
----
+- ✔️ **Kullanıcı Girişi:** OAuth tabanlı kimlik doğrulama
+- ✔️ **Kıdem Bazlı Nöbet Dağılımı:** Daha kıdemli doktorlara uygun dağılım
+- ✔️ **Esnek Nöbet Planlaması:** Kullanıcı tercihlerine göre esneklik
+- ✔️ **Optimizasyon Algoritması:** Genetik Algoritma & Hill Climbing
+- ✔️ **Manuel Düzenleme:** Kullanıcıların nöbet planında değişiklik yapabilmesi
+- ✔️ **JSON Formatında Veri Saklama:** Esnek ve hızlı
 
 ---
 
-## ⚙️ OPTİMİZASYON YÖNTEMLERİ  
+---
 
-Uygulamada **Hill Climbing** ve **Genetik Algoritma** optimizasyon yöntemleri kullanılmaktadır.  
-**Demo sürümünde yalnızca Hill Climbing aktif** olup, **Genetik Algoritma üzerine çalışmalar devam etmektedir.**  
+## ⚙️ OPTİMİZASYON YÖNTEMLERİ
+
+Uygulamada **Hill Climbing** ve **Genetik Algoritma** optimizasyon yöntemleri kullanılmaktadır.
+**Demo sürümünde yalnızca Hill Climbing aktif** olup, **Genetik Algoritma üzerine çalışmalar devam etmektedir.**
 
 ---
 
-## 🛠 SOFT CONSTRAINTLER (ESNEK KISITLAR)  
+## 🛠 SOFT CONSTRAINTLER (ESNEK KISITLAR)
 
-Soft constraint'ler ihlal edildiğinde belirli bir ceza puanı uygulanır:  
+Soft constraint'ler ihlal edildiğinde belirli bir ceza puanı uygulanır:
 
-- **Gündüz ve gece nöbetlerinin dengesiz dağılımı**  
-- **Arka arkaya iki gece nöbeti atanması**  
-- **Hafta sonlarının mümkün olduğunca boş bırakılması**  
-- **Doktorun kıdemine uygun olmayan nöbet atanması**  
-- **Opsiyonel izinli doktora nöbet atanması**  
+- **Gündüz ve gece nöbetlerinin dengesiz dağılımı**
+- **Arka arkaya iki gece nöbeti atanması**
+- **Hafta sonlarının mümkün olduğunca boş bırakılması**
+- **Doktorun kıdemine uygun olmayan nöbet atanması**
+- **Opsiyonel izinli doktora nöbet atanması**
 
 ---
 
-## 🚨 HARD CONSTRAINTLER (ZORUNLU KISITLAR)  
+## 🚨 HARD CONSTRAINTLER (ZORUNLU KISITLAR)
 
-Hard constraint'lerin ihlali kabul edilemez:  
+Hard constraint'lerin ihlali kabul edilemez:
 
 - **Aynı nöbet içinde aynı doktor birden fazla kez atanamaz.**
-- **Ardışık günlerde aynı doktora nöbet atanamaz.**  
+- **Ardışık günlerde aynı doktora nöbet atanamaz.**
 - **Bir doktora üst üste 2'den fazla gece nöbeti atanamaz.**
-- **Mecburi izinli doktora nöbet atanması**  
-
-
----
-
-
-## 🛠 TEKNOLOJİLER  
-
-- **Backend:** Python (Flask)  
-- **Veritabanı:** PostgreSQL  
-- **Frontend:** React Native  
-- **Kimlik Doğrulama:** OAuth tabanlı sistem  
-- **Optimizasyon Algoritması:** Genetik Algoritma & Hill Climbing  
+- **Mecburi izinli doktora nöbet atanması**
 
 ---
 
-## 📑 KURULUM VE ÇALIŞTIRMA  
+## 🛠 TEKNOLOJİLER
 
-### 🔹 **GEREKSİNİMLER**  
-- Python 3.x  
-- PostgreSQL veritabanı  
-- Node.js & npm/yarn  
+- **Backend:** Python (Flask)
+- **Veritabanı:** SQLite
+- **Frontend:** React
+- **Kimlik Doğrulama:** JWT tabanlı sistem
+- **Optimizasyon Algoritması:** Genetik Algoritma & Hill Climbing
+- **Paketleme:** Electron
 
-### 🔹 **BACKEND KURULUMU**  
+---
+
+## 📑 KURULUM VE ÇALIŞTIRMA
+
+### 🔹 **GEREKSİNİMLER**
+
+- Python 3.x
+- PostgreSQL veritabanı
+- Node.js & npm/yarn
+
+### 🔹 **BACKEND KURULUMU**
+
 ```sh
 # Gerekli paketleri yükle
 pip install -r requirements.txt
@@ -91,9 +95,11 @@ pip install -r requirements.txt
 ```
 
 # Flask uygulamasını çalıştır
+
 flask run
 
-### 🔹 **FRONTEND KURULUMU**  
+### 🔹 **FRONTEND KURULUMU**
+
 ```sh
 # Gerekli modülleri yükle
 npm install
@@ -102,3 +108,4 @@ npm install
 npm start
 
 
+```

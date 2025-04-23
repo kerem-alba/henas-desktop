@@ -1,4 +1,17 @@
-export const API_BASE_URL = window.API_CONFIG ? window.API_CONFIG.API_BASE_URL : "http://127.0.0.1:5000";
+// API_BASE_URL'yi belirle
+let API_BASE_URL;
+
+// Önce window.API_CONFIG'i kontrol et
+if (window.API_CONFIG && window.API_CONFIG.API_BASE_URL) {
+  API_BASE_URL = window.API_CONFIG.API_BASE_URL;
+  console.log("Using API_BASE_URL from config:", API_BASE_URL);
+} else {
+  // Varsayılan olarak localhost'u kullan
+  API_BASE_URL = "http://localhost:5000";
+  console.log("Using default API_BASE_URL:", API_BASE_URL);
+}
+
+export { API_BASE_URL };
 
 export const login = async (username, password) => {
   try {

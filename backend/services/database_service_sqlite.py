@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 import config.globals as g
 from flask_bcrypt import Bcrypt
 import sqlite3
@@ -9,8 +10,25 @@ load_dotenv()
 
 bcrypt = Bcrypt()
 
+# Paketlenmiş uygulama için veritabanı yolunu belirle
+def get_db_path():
+    # PyInstaller ile paketlenmiş mi kontrol et
+    if getattr(sys, 'frozen', False):
+        # Paketlenmiş uygulama için
+        if os.path.exists(os.path.join(os.path.dirname(sys.executable), "mydata.db")):
+            # Exe ile aynı dizinde
+            return os.path.join(os.path.dirname(sys.executable), "mydata.db")
+        elif os.path.exists(os.path.join(os.path.dirname(os.path.dirname(sys.executable)), "resources", "mydata.db")):
+            # Electron resources klasöründe
+            return os.path.join(os.path.dirname(os.path.dirname(sys.executable)), "resources", "mydata.db")
+        else:
+            # Varsayılan konum
+            return os.path.join(os.path.dirname(sys.executable), "mydata.db")
+    else:
+        # Geliştirme ortamında
+        return os.path.join(os.path.dirname(__file__), "..", "mydata.db")
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "..", "mydata.db")
+DB_PATH = get_db_path()
 print(f"SQLite DB Path: {DB_PATH}")
 print(f"DB exists: {os.path.exists(DB_PATH)}")
 
@@ -28,7 +46,7 @@ def connect_to_db():
 
 
 def authenticate_user(username, password):
-    conn = sqlite3.connect(os.path.join(os.path.dirname(__file__), "..", "mydata.db"))
+    conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
 

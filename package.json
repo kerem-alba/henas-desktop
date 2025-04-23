@@ -5,12 +5,20 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "electron .",
+    "build-frontend": "cd frontend && npm install && npm run build",
+    "build-backend": "cd backend && pyinstaller main.spec",
+    "setup-areas": "cd backend && python setup_areas.py",
+    "check-db": "cd backend && python check_db.py",
+    "add-user": "cd backend && python add_user.py",
+    "package": "electron-builder build --win",
+    "build": "npm run build-frontend && npm run build-backend && npm run setup-areas && npm run add-user && npm run package"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^35.1.2"
+    "electron": "^35.1.2",
+    "electron-builder": "^26.0.12"
   }
 }

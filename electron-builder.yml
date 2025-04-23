@@ -1,0 +1,35 @@
+appId: com.henas.desktop
+productName: Henas
+copyright: Copyright © 2024
+directories:
+  output: dist
+  buildResources: build
+files:
+  - "!node_modules/**/*"
+  - "!frontend/node_modules/**/*"
+  - "!frontend/src/**/*"
+  - "!**/*.map"
+  - "!**/*.md"
+  - "package.json"
+  - "main.js"
+  - "frontend/build/**/*"
+extraResources:
+  - from: "backend/mydata.db"
+    to: "backend/mydata.db"
+  - from: "backend/dist/main.exe"
+    to: "backend/main.exe"
+asarUnpack:
+  - "backend/main.exe"
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Henas
+  uninstallDisplayName: Henas
+  artifactName: Henas-Setup-${version}.${ext}

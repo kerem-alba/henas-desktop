@@ -1,0 +1,6 @@
+flask==3.1.0
+flask-cors==5.0.0
+flask-jwt-extended==4.7.1
+flask-bcrypt==1.0.1
+python-dotenv==1.0.1
+pyinstaller==6.12.0
